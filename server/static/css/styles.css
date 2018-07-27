@@ -1,0 +1,93 @@
+#btn-menu {
+    width: 80px;
+    height: 80px;
+    background: #0067da;
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    border-radius: 80px;
+    z-index: 999999;
+    text-align: center;
+    line-height: 80px;
+    color: #ffffff;
+    font-size: 30px;
+}
+
+#btn-menu .far {
+    line-height: 80px;
+}
+
+#control-panel {
+    bottom: -110%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    padding: 10px;
+    position: absolute;
+    z-index: 999999;
+    background: white;
+    transform: translateX(-50%);
+    transition: all 200ms ease-in;
+}
+
+#control-panel.actif {
+    bottom: 15px;
+    transition: all 200ms ease-in;
+}
+
+#control-panel .scene-thumbnail {
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+    background: #f0f0f0;
+    line-height: 90px;
+    text-align: center;
+    margin: 5px;
+}
+
+#connection-list {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+    width: 48px;
+}
+
+#connection-list ul {
+    list-style-type: none;
+}
+
+.connected-client {
+    text-align: center;
+    line-height: 48px;
+    font-size: 18px;
+    width: 48px;
+    height: 48px;
+    background: #0067da;
+    color: #ffffff;
+    border-radius: 100px;
+    margin-bottom: 12px;
+    transition: all 100ms ease-in;
+    float: right;
+    cursor: pointer;
+}
+
+.connected-client.is-local-client {
+    background: #50c03d;
+}
+
+.connected-client span {
+    display: none;
+}
+
+.connected-client:hover {
+    padding-left: 20px;
+    padding-right: 20px;
+    background: #2c3844;
+    width: auto;
+}
+
+.connected-client:hover span {
+    display: inline-block;
+    margin-left: 12px;
+}
