@@ -108,6 +108,7 @@ AFRAME.registerComponent('multitouch-look-controls', {
 
 
     update: function(oldData) {
+        console.log("update");
         var data = this.data;
 
         // Toggle enable/disabled
@@ -118,6 +119,8 @@ AFRAME.registerComponent('multitouch-look-controls', {
 
 
         if (oldData) {
+            console.log("Update Old Data");
+
             this.pitchObject.rotation.set(0, 0, 0);
             this.yawObject.rotation.set(0, 0, 0);
 

@@ -2,30 +2,29 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Dev Example — Networked-Aframe</title>
-    <meta name="description" content="Dev Example — Networked-Aframe">
+    <title>Graph A-Frame</title>
+    <meta name="description" content="A-Frame">
     <link rel="stylesheet" href="/css/regular.css">
     <link rel="stylesheet" href="/css/fontawesome.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/js/jqueryui/jquery-ui.min.css">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="/js/jqueryui/jquery-ui.min.js"></script>
 
     <!-- via "npm run build" -->
     <script src="/aframe.js"></script>
     <script src="/build.js"></script>
-    <script>
-        window.NAF || document.write('<script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js">\x3C/script>')
-    </script>
 
     <!--<script src="https://unpkg.com/aframe-particle-system-component@1.0.5/dist/aframe-particle-system-component.min.js"></script>-->
-    <script src="https://unpkg.com/aframe-template-component@3.x.x/dist/aframe-template-component.min.js"></script>
+    <!--<script src="https://unpkg.com/aframe-template-component@3.x.x/dist/aframe-template-component.min.js"></script>
     <script src="https://unpkg.com/aframe-layout-component@3.x.x/dist/aframe-layout-component.min.js"></script>
-    <script src="https://unpkg.com/aframe-event-set-component@3.x.x/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.x.x/dist/aframe-event-set-component.min.js"></script>-->
     <script src="/js/aframe-is-visible.js"></script>
 
     <!-- Pour que le touch fonctionne correctement sur mobile / tablette -->
-    <script src="/js/multitouch-look-controls.js"></script>
+    <!--<script src="/js/multitouch-look-controls.js"></script>-->
+
+    <script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.min.js"></script>
 
     <!-- Transfère le controle de la caméra lorsque un client clique -->
     <script src="/js/toggle-ownership.component.js"></script>
@@ -51,7 +50,7 @@
     </div>
 
 
-    <a-scene networked-scene="room: dev; debug: true; adapter: wseasyrtc;">
+    <a-scene networked-scene="room: dev; debug: true; adapter: EasyRTC;">
         <a-assets>
             <img class="scene" id="a-balcon" src="/assets/360/A_Balcon.jpg" data-name="A - Balcon">
             <img class="scene" id="a-chambre" src="/assets/360/A_Chambre.jpg" data-name="A - Chambre">
@@ -60,33 +59,36 @@
             <img class="scene" id="a-sdb" src="/assets/360/A_SDB.jpg" data-name="A - SDB">
             <img class="scene" id="b-balcon" src="/assets/360/B_Balcon.jpg" data-name="B - Balcon">
 
+            <!-- Icone pour hotspot -->
+            <img class="icon" id="icon-hotspot" src="/assets/hotspot-up.png">
+
             <!-- Templates -->
             <!-- Camera synchronisée via WebRTC -->
             <template id="camera-template">
-                <a-entity class="networked-camera" camera="active: false" position="2 0 0" wasd-controls multitouch-look-controls>
+                <a-entity class="networked-rig" position="1 0 0" rotation="0 90 0" movement-controls="camera: #networked-main-camera" toggle-ownership>
+                    <a-entity id="networked-main-camera" class="camera" camera="active: false" position="0 0 0" look-control>
+                    </a-entity>
                 </a-entity>
             </template>
 
             <!-- /Templates -->
         </a-assets>
 
-        <a-entity id="main-camera" networked="template:#camera-template;attachTemplateToLocal:false;networkId:123" camera="active: true" wasd-controls multitouch-look-controls="minPitch: -90; maxPitch: 90;" toggle-ownership position="0 0 0">
-            <a-entity cursor="fuse: true; fuseTimeout: 1000" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.002; radiusOuter: 0.01" material="color: black; shader: flat">
+        <a-entity id="rig" networked="template:#camera-template;attachTemplateToLocal:false;networkId:networked-rig" position="1 0 0" rotation="0 0 0" movement-controls="camera: #main-camera" toggle-ownership>
+            <a-entity id="main-camera" class="camera" camera="active: true" position="0 0 0">
+                <!--<a-entity cursor="fuse: true; fuseTimeout: 1000" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.002; radiusOuter: 0.01" material="color: black; shader: flat">
+                </a-entity>-->
             </a-entity>
         </a-entity>
 
-        <a-sphere class="hotspot" id="tip1" is-visible position="-8.15 -1.60 2.918" scale="1 1 1" color="#ffff00" radius="0.3" animation__scale="resumeEvents: isvisible; startEvents: initTip; pauseEvents: notVisible; property: scale; dir: alternate; dur: 400; easing: easeInSine; loop: true; to: 1.2 1.2 1.2"
-            animation__color="startEvents: isVisible; property: material.color; dir: alternate; dur: 400; easing: easeInSine; to: #ff0000;">
-        </a-sphere>
-
-        <a-sphere class="hotspot" id="tip2" is-visible position="-8.15 -3.60 2.918" scale="1 1 1" color="#ffff00" radius="0.3" animation__scale="resumeEvents: isvisible; startEvents: initTip; pauseEvents: notVisible; property: scale; dir: alternate; dur: 400; easing: easeInSine; loop: true; to: 1.2 1.2 1.2"
-            animation__color="startEvents: isVisible; property: material.color; dir: alternate; dur: 400; easing: easeInSine; to: #ff0000;">
-        </a-sphere>
-
+        <a-entity class="hotspot" id="tip2" position="-8.15 -3.60 2.918" scale="1 1 1" look-at="#rig" data-target="">
+            <a-image src="#icon-hotspot"></a-image>
+        </a-entity>
 
 
         <!-- Vue 360 -->
-        <a-sky id="vue360" radius="10" src="#a-balcon"></a-sky>
+            <a-sky id="vue360" radius="10" src="#" animation__fadeout="property: radius; dur: 500; from 10; to: 0; startEvents: fadeout;"></a-sky>
+        
 
     </a-scene>
 
@@ -98,7 +100,10 @@
             components: [
                 'position',
                 'rotation',
-                'toggle-ownership'
+                {
+                selector: '.camera',
+                component: 'rotation'
+                },
             ]
         });
     </script>

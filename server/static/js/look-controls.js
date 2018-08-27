@@ -14,6 +14,7 @@ AFRAME.registerComponent('look-controls', {
     },
 
     init: function() {
+        console.log("init look control");
         var sceneEl = this.el.sceneEl;
 
         // Aux variables

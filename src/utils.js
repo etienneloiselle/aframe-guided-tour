@@ -38,30 +38,6 @@ module.exports.createNetworkId = function() {
   return Math.random().toString(36).substring(2, 9);
 };
 
-module.exports.delimiter = '---';
-
-module.exports.childSchemaToKey = function(schema) {
-  var key = (schema.selector || '')
-            + module.exports.delimiter
-            + (schema.component || '')
-            + module.exports.delimiter
-            + (schema.property || '');
-  return key;
-};
-
-module.exports.keyToChildSchema = function(key) {
-  var splitKey = key.split(module.exports.delimiter, 3);
-  return { selector: splitKey[0] || undefined, component: splitKey[1], property: splitKey[2] || undefined};
-};
-
-module.exports.isChildSchemaKey = function(key) {
-  return key.indexOf(module.exports.delimiter) != -1;
-};
-
-module.exports.childSchemaEqual = function(a, b) {
-  return a.selector == b.selector && a.component == b.component && a.property == b.property;
-};
-
 /**
  * Find the closest ancestor (including the passed in entity) that has a `networked` component
  * @param {ANode} entity - Entity to begin the search on
@@ -71,11 +47,11 @@ function getNetworkedEntity(entity) {
   return new Promise((resolve, reject) => {
     let curEntity = entity;
 
-    while(curEntity && !curEntity.hasAttribute("networked")) {
+    while(curEntity && curEntity.components && !curEntity.components.networked) {
       curEntity = curEntity.parentNode;
     }
 
-    if (!curEntity) {
+    if (!curEntity || !curEntity.components || !curEntity.components.networked) {
       return reject("Entity does not have and is not a child of an entity with the [networked] component ");
     }
 
@@ -94,35 +70,31 @@ module.exports.getNetworkedEntity = getNetworkedEntity;
 module.exports.takeOwnership = function(entity) {
   let curEntity = entity;
 
-  while(curEntity && !curEntity.hasAttribute("networked")) {
+  while(curEntity && curEntity.components && !curEntity.components.networked) {
     curEntity = curEntity.parentNode;
   }
 
-  if (curEntity) {
-    if (!curEntity.components.networked) {
-      throw new Error("Entity with [networked] component not initialized.");
-    }
-
-    return curEntity.components.networked.takeOwnership();
+  if (!curEntity || !curEntity.components || !curEntity.components.networked) {
+    throw new Error("Entity does not have and is not a child of an entity with the [networked] component ");
   }
 
-  throw new Error("takeOwnership() must be called on an entity or child of an entity with the [networked] component.");
+  return curEntity.components.networked.takeOwnership();
 };
 
 module.exports.isMine = function(entity) {
   let curEntity = entity;
 
-  while(curEntity && !curEntity.hasAttribute("networked")) {
+  while(curEntity && curEntity.components && !curEntity.components.networked) {
     curEntity = curEntity.parentNode;
   }
 
-  if (curEntity) {
-    if (!curEntity.components.networked) {
-      throw new Error("Entity with [networked] component not initialized.");
-    }
-
-    return curEntity.components.networked.data.owner === NAF.clientId;
+  if (!curEntity || !curEntity.components || !curEntity.components.networked) {
+    throw new Error("Entity does not have and is not a child of an entity with the [networked] component ");
   }
 
-  throw new Error("isMine() must be called on an entity or child of an entity with the [networked] component.");
+  return curEntity.components.networked.data.owner === NAF.clientId;
+};
+
+module.exports.almostEqualVec3 = function(u, v, epsilon) {
+  return Math.abs(u.x-v.x)<epsilon && Math.abs(u.y-v.y)<epsilon && Math.abs(u.z-v.z)<epsilon;
 };
